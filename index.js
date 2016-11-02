@@ -1,13 +1,14 @@
-var five = require('johnny-five');
-var raspi = require('raspi-io');
+let five = require('johnny-five');
+let raspi = require('raspi-io');
+import { myDeviceId, myAccessKey, myAccessSecret } from 'keys'
 
-var Device = require('losant-mqtt').Device;
+let Device = require('losant-mqtt').Device;
 
 // Construct Losant device.
-var device = new Device({
-  id: 'my-device-id',
-  key: 'my-access-key',
-  secret: 'my-access-secret'
+let device = new Device({
+  id: myDeviceId,
+  key: myAccessKey,
+  secret: myAccessSecret
 });
 
 // Connect the device to Losant.
@@ -26,10 +27,10 @@ board.on('ready', function() {
   // Button connected to GPIO 21.
   var button = new five.Button('GPIO21');
 
-  // When the button is pressed.
-  button.on('down', function() {
-
-    // Send state to Losant.
-    device.sendState({ button: true });
+  // Hook the command event listener.
+  device.on('command', function(command) {
+    if(command.name === 'toggle') {
+      led.toggle();
+    }
   });
 });
